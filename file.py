@@ -9,7 +9,7 @@ def extract_text_from_pdf(pdf_file):
             page = pdf_reader.pages[page_num]
             text += page.extract_text()
     return text
-
+# not working
 def remove_extra_spaces(text):
     # Replace multiple spaces with a single space
     text = re.sub(r'\s+', ' ', text)
