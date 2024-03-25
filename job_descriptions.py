@@ -1,7 +1,8 @@
 # Hardcoded job descriptions
 job_descriptions = [
     "We are looking for a Python Developer with experience in Django and Flask frameworks.",
-    "We are seeking a Data Scientist proficient in machine learning and deep learning techniques.",
+    "We are seeking a data scientist proficient in machine learning and deep learning techniques.",
+    # "We are seeking a proficient in machine learning and deep learning techniques.",
     "Join our team as a Frontend Developer specializing in HTML, CSS, and JavaScript.",
     "We have an opening for a Software Engineer experienced in C++ and Python programming languages.",
     "An exciting opportunity for a Computer Vision Engineer with expertise in OpenCV and TensorFlow.",
