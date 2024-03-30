@@ -14,4 +14,4 @@ job_descriptions = [
     "We are looking for a Rust Developer",
     "We are looking for a Git and Github Expert",
     "We are looking for a PHP,Vue.js,Express.js developer"
-]
+]# Hardcoded job descriptions
