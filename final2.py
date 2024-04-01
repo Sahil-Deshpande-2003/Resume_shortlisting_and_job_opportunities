@@ -42,8 +42,8 @@ if __name__ == "__main__":
     # Create TF-IDF vectorizer with words from job descriptions as vocabulary
     vectorizer = TfidfVectorizer(tokenizer=custom_tokenizer, vocabulary=job_description_words, token_pattern='')
 
-    # Dictionary to store top candidates for each job
-    top_candidates = {}
+    # Dictionary to store candidates for each job
+    all_candidates = {}
 
     # Iterate over each job description
     for job_desc in job_descriptions:
@@ -74,13 +74,12 @@ if __name__ == "__main__":
         # Sort candidates based on similarity score (highest to lowest)
         candidates.sort(key=lambda x: x[1], reverse=True)
 
-        # Store top 2 candidates for current job
-        top_candidates[job_desc.strip()] = candidates[:2]
+        # Store candidates for current job
+        all_candidates[job_desc.strip()] = candidates
 
-    # Print top candidates for each job
-    for job_desc, candidates in top_candidates.items():
-        print(f"Top candidates for job: {job_desc}")
-        for candidate, score in candidates:
-            print(f"- Candidate: {candidate}, Similarity Score: {score}")
+    # Print candidates for each job
+    for job_desc, candidates in all_candidates.items():
+        print(f"Candidates for job: {job_desc}")
+        for rank, (candidate, score) in enumerate(candidates, 1):
+            print(f"{rank}. Candidate: {candidate}, Similarity Score: {score}")
         print()
-
