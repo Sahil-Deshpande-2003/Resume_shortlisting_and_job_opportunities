@@ -1,0 +1,11 @@
+We are looking for a Python Developer with experience in Django and Flask frameworks. We are seeking a proficient in machine learning and deep learning techniques. We are looking for a Rust Developer. We are looking for a PHP,Vue.js,Express.js developer.
+
+We are seeking a data scientist proficient in machine learning and deep learning techniques. Looking for an AI Researcher with knowledge of natural language processing and artificial intelligence.
+
+Join our team as a Frontend Developer specializing in HTML, CSS, and JavaScript. An exciting opportunity for a Computer Vision Engineer with expertise in OpenCV and TensorFlow.
+
+We have an opening for a Software Engineer experienced in C++ and Python programming languages. We are looking for a Git and Github Expert. We are seeking a skilled software engineer with experience in Java and web development. We are looking for a motivated individual with expertise in cybersecurity and network management.
+
+Join our robotics team as a Robotics Engineer with hands-on experience in robotics frameworks. Seeking a Software Tester with experience in manual and automated testing.
+
+We are hiring a MySQL Database Administrator with expertise in managing large databases. An opportunity for a Web Developer skilled in PHP, MySQL, and JavaScript. The ideal candidate should have strong skills in Python programming and experience with database management.
