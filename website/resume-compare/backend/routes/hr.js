@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
     // console.log(extractedText)
     // const newText = new TextModel({ description, extractedText});
     // await newText.save();
-    res.json({ message: 'Text data saved successfully' });
+    // res.json({ message: 'Text data saved successfully' });
     const resume_text = extractedText;
     // const reqProduct = JSON.parser(product);
 
@@ -67,7 +67,7 @@ router.post("/", async (req, res) => {
 
     console.log("Result from Python script:", result);
 
-    res.json({ result: result});
+    res.json({ 'result': result});
   } catch (error) {
     console.error('Error saving text data:', error);
     res.status(500).json({ error: 'Internal server error' });

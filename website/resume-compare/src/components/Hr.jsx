@@ -137,9 +137,19 @@ function Hr() {
         // Send extracted text data to backend server at localhost:3000
         const response = await axios.post('http://localhost:3000/api/text', {description, extractedText});
         console.log("Response" , response.data);
-        // Reset form after successful submission
-        setDescription('');
-        setFiles([]);
+
+        console.log("Response: ", typeof response);
+        if (response.statusText !== "OK") {
+          throw new Error("Failed to execute Python script");
+        }
+        
+        // const result = await response.data.json();
+        console.log("Result from backend:", response.data["result"]);
+        setbackendResponse(response.data["result"])
+
+        // Reset form after successful <submission></submission>
+        // setDescription('');
+        // setFiles([]);
       } catch (error) {
         console.error('Error submitting data:', error);
       }
@@ -179,6 +189,7 @@ function Hr() {
       }
       {backendResponse && (
         <div>
+          <br />
           <h3>Extracted Text</h3>
           <p>{backendResponse}</p>
         </div>
