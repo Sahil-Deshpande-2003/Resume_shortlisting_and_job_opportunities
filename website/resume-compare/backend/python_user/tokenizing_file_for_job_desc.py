@@ -72,3 +72,5 @@ new_tokens = remove_stop_words(tokenized_descriptions) # 177 to 118
 
 
 tokenized_descriptions = new_tokens
+
+

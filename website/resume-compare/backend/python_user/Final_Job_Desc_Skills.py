@@ -31,3 +31,5 @@ def extract_skills(job_desc):
     return skills_2D
 
 skills_2D = extract_skills(tokenizing_file_for_job_desc.tokenized_descriptions)
+
+

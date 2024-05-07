@@ -28,10 +28,10 @@ def extract(url):
         return None
 
 def transform_url(soup):
-    divs = soup.find_all('li', class_ = 'data-results-content-parent')
+    divs = soup.find_all('li', {'class' : ['data-results-content-parent', 'relative bg-shadow']})
     for path in divs:
         try:
-            url = BASE_URL + path.find('a', class_='data-results-content').get('href')
+            url = BASE_URL + path.find('a', {'class' : ['data-results-content', 'data-results-content block', 'job-listing-item']}).get('href')
         except:
             url = None
         urls.append(url)
@@ -64,7 +64,12 @@ soup = extract(result_url)
 # print(soup)
 transform_url(soup)
 
+print(urls)
+index = 5
 for i in urls:
+    if index == 0:
+        break
+    index = index - 1
     soup = extract(i)
     transform(soup)
     # print(i)
@@ -75,4 +80,5 @@ naukri1 = []
 for job in jobs:
 
 
-    naukri1.append(job['description'] + ',')
+    naukri1.append(job['description'])
+

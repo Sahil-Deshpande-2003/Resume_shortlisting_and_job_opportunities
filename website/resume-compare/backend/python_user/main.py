@@ -8,12 +8,20 @@ import re
 
 
 def custom_tokenizer(text): # So that 'C' is not ignored which is ignored whenever we instantiate tfidfvectorizer
+
+
+
     special_cases = {"c++": "cplusplus", "c#": "csharp"}
+
     tokens = re.split(r'\s*,\s*', text)
+
     for i, token in enumerate(tokens):
         if token in special_cases.keys():
             tokens[i] = token.replace("++", "plusplus").replace("#", "sharp")
+
+
     tokens = [re.sub(r'\W+', '', token) for token in tokens]
+
     '''
     This line of code removes non-alphanumeric characters from each token in a list called tokens
 
@@ -25,11 +33,15 @@ def custom_tokenizer(text): # So that 'C' is not ignored which is ignored whenev
     '''
     With enumerate(), you don't need to manually index into the list (tokens[i]). Instead, you directly get both the index (i) and the value (token) in each iteration of the loop.
     '''
+    
     for i, token in enumerate(tokens):
+
         if token in special_cases.values():
+            
             for key, value in special_cases.items():
                 if value == token:
                     tokens[i] = key
+                      
     return tokens
 
 
