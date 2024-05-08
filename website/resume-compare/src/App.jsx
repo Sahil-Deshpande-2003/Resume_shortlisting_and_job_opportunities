@@ -1,11 +1,3 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-
-// function App() {
-//   const [title, setTitle] = useState("");
-//   const [files, setFiles] = useState("");
 
 
 import React from 'react';
@@ -17,7 +9,8 @@ import Hr from './components/Hr'
 import './App.css';
 import { Document, Page, pdfjs } from 'react-pdf'; // Import necessary components from react-pdf
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pdf
-
+import Navbar from './components/Navbar';
+import Job_Openings_Page from './components/Job_Openings_Page';
 // Set up pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -135,13 +128,18 @@ function App() {
     
       <Router>
         <Routes>
-        <Route path="/" exact element={<HomePage/>} />
+        <Route path="/" exact element={
+          <>
+          <Navbar/>
+          <HomePage/>
+          </>
+
+        } />
         <Route path="/user" element={<User/>} />
         <Route path="/Hr" element={<Hr/>} />
+        {/* <Route path='/job-openings' element={<Job_Openings_Page/>}></Route> */}
         </Routes>
         
-        
-        {/* <Route path="/contact" component={ContactPage} /> */}
       </Router>
   );
 }

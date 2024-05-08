@@ -1,84 +1,37 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-
-// function App() {
-//   const [title, setTitle] = useState("");
-//   const [files, setFiles] = useState("");
-
-
-import React from 'react';
-import { useState } from 'react';
-// import './App.css';
-import { Document, Page, pdfjs } from 'react-pdf'; // Import necessary components from react-pdf
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pdf
-
-// Set up pdfjs worker
+import React, { useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import './User.css';
+import Job_Openings_Page from './Job_Openings_Page';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function User() {
-  const [title, setTitle] = useState('');
-  const [file, setFile] = useState(null); // Store file object
-  const [numPages, setNumPages] = useState(null); // State to store the number of pages
-  const [pdfText, setPdfText] = useState(''); // State to store extracted text
-  const [backendResponse, setbackendResponse] = useState('')
+  const [file, setFile] = useState(null);
+  const [backendResponse, setBackendResponse] = useState('');
 
   const onFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
-
-
-  const fetchData = async (value, check) => {
+  const fetchData = async (value) => {
     try {
-      console.log("Inside fetchData");
-      console.log("Printing value....");
-      console.log(value);
-      // props.setProgress(20);
-
-      const url = `http://localhost:3000/api/user?searchTerm=${encodeURIComponent(
-        value
-      )}`;
-
-      // // props.setProgress(50);
-
+      const url = `http://localhost:3000/api/user?searchTerm=${encodeURIComponent(value)}`;
       const response = await fetch(url, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        // Convert search term to JSON and send it as the query parameter
       });
 
       if (!response.ok) {
-        throw new Error("Failed to execute Python script");
+        throw new Error('Failed to execute Python script');
       }
 
       const result = await response.json();
-      console.log("Result from backend:", result["result"]);
-      setbackendResponse(result["result"])
-
-      // const dead = result["result"];
-      // console.log("Printing type of dead:", typeof dead);
-      // console.log("Original JSON string:", dead);
-
-      // const cleanedStr = dead.replace(/'/g, '"').replace(/,\s+/g, ",");
-      // console.log("Cleaned JSON string:", cleanedStr);
-
-      // const list = JSON.parse(cleanedStr);
-
-      // console.log("Parsed JSON data:", list);
-
-      // console.log("Printing type of list:", typeof list);
-
-      // setProducts(list);
+      setBackendResponse(result['result']);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
 
@@ -94,41 +47,51 @@ function User() {
           const pageText = await page.getTextContent();
           text += pageText.items.map((item) => item.str).join(' ');
         }
-        resolve(text); // Resolve the promise with the extracted text
+        resolve(text);
       };
-      reader.onerror = reject; // Reject the promise if an error occurs
+      reader.onerror = reject;
       reader.readAsArrayBuffer(file);
     });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const text = await extractText(file);
-    // setTimeout(1)
     fetchData(text);
   };
 
   return (
     <div className="App">
-      <form className="formStyle" onSubmit={handleSubmit}>
-        <h2>Upload PDF here</h2>
-        <input type="text" className="form-control" placeholder="Title" required onChange={(e) => setTitle(e.target.value)} />
-        <br />
-        <input type="file" className="form-control" accept="application/pdf" required onChange={onFileChange} />
-        <br />
-        <button className="btn btn-primary" type="submit" disabled={!file}>
-          Submit
-        </button>
-      </form>
-      {backendResponse && (
-        <div>
-          <h3>Extracted Text</h3>
-          <p>{backendResponse}</p>
+      {backendResponse ? (
+        <div style={{textAlign:'center',alignItems:'center'}} className='center'>
+          <div>
+            <h1>Recommended Job Openings</h1>
+            {backendResponse.split('\n').map((job, index) => (
+              <div className="card" key={index}>
+                <img src="..." className="card-img-top" alt="..." />
+                <div className="card-body">
+                  <h5 className="card-title">Job Opportunity {index + 1}</h5>
+                  <p className="card-text">{job}</p>
+                  <a href="#" className="btn btn-primary">Apply</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="center">
+          <form className="formStyle" onSubmit={handleSubmit}>
+            <h1>Upload PDF here</h1>
+            <br />
+            <input type="file" className="form-control" accept="application/pdf" required onChange={onFileChange} />
+            <br />
+            <button className="btn btn-primary" type="submit" disabled={!file}>
+              Submit
+            </button>
+          </form>
         </div>
       )}
     </div>
-
   );
 }
 
