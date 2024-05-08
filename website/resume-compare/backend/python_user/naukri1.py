@@ -37,7 +37,7 @@ def transform_url(soup):
         urls.append(url)
     return
 
-def transform(soup):
+def transform(soup, url):
     try:
         title = soup.find('h1', class_= "h3 dark-blue-text b jdp_title_header upcase").text
     except:
@@ -52,11 +52,12 @@ def transform(soup):
     except:
         skills = None
 
-    Data = {"title": title, "description": description, "skills": skills}
+    Data = {"title": title, "description": description, "skills": skills, "url": url}
     jobs.append(Data)
 
 # Example usage
-search_query = input("Enter your search query: ")
+# search_query = input("Enter your search query: ")
+search_query = "python developer"
 result_url = get_naukri_url(search_query)
 
 # print(result_url)
@@ -64,15 +65,15 @@ soup = extract(result_url)
 # print(soup)
 transform_url(soup)
 
-print(urls)
+# print(urls)
 index = 5
 for i in urls:
     if index == 0:
         break
     index = index - 1
     soup = extract(i)
-    transform(soup)
-    # print(i)
+    transform(soup, i)
+   # print(i)
 
 
 naukri1 = []
@@ -80,5 +81,6 @@ naukri1 = []
 for job in jobs:
 
 
-    naukri1.append(job['description'])
+    naukri1.append(str(job))
 
+# print(jobs)

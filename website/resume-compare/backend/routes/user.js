@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
 
     console.log("Resume text: " + resume_text);
 
-    const scriptPath = path.join(__dirname, "..", "pythonFiles2", "final.py");
+    const scriptPath = path.join(__dirname, "..", "python_user1", "final.py");
     // const scriptPath = "/python/similar_products.py";
     // const result = await executePython(scriptPath, ["camera"]);
     const result = await executePython(scriptPath, [resume_text]);
