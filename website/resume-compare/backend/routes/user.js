@@ -53,10 +53,11 @@ router.get("/", async (req, res) => {
 
     console.log("Resume text: " + resume_text);
 
+
     const scriptPath = path.join(__dirname, "..", "python_user", "main.py");
     // const scriptPath = "/python/similar_products.py";
     // const result = await executePython(scriptPath, ["camera"]);
-    const result = await executePython(scriptPath,[resume_text]);
+    const result = await executePython(scriptPath,["python"]);
 
     console.log("Result from Python script:", result);
 

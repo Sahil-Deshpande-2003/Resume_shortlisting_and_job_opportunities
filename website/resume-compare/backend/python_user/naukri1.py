@@ -58,7 +58,6 @@ def transform(soup, url):
 
 # Example usage
 search_query = str(sys.argv[1])
-print(f"Search Query = {search_query}")
 # search_query = "python developer"
 result_url = get_naukri_url(search_query)
 
@@ -83,6 +82,6 @@ naukri1 = []
 for job in jobs:
 
 
-    naukri1.append(str(job))
+    naukri1.append((job))
 
 # print(jobs)

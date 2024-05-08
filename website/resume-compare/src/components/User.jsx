@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import './User.css';
-import Job_Openings_Page from './Job_Openings_Page';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function User() {
@@ -66,16 +65,32 @@ function User() {
         <div style={{textAlign:'center',alignItems:'center'}} className='center'>
           <div>
             <h1>Recommended Job Openings</h1>
-            {backendResponse.split('\n').map((job, index) => (
-              <div className="card" key={index}>
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Job Opportunity {index + 1}</h5>
-                  <p className="card-text">{job}</p>
-                  <a href="#" className="btn btn-primary">Apply</a>
+            {console.log("About to print backend response 1")}
+            {console.log(backendResponse)}
+            {console.log("Printing type")}
+            {console.log(typeof backendResponse)}
+            
+            {backendResponse.replace(/"/g, '').replace(/\xa0/g, '').replace(/\\x/g, '')};
+            {console.log("About to print backend response 2")}
+            {console.log(backendResponse)}
+            {backendResponse = JSON.parse(backendResponse)}
+            
+            {backendResponse.split('\n').map((job, index) => {
+               const cleanedStr = job.replace(/'/g, '"').replace(/\xa0/g, ' ').replace(/\\x/g, '').replace(/\xa0/g, ' ');
+               {console.log("Character at position 92:", cleanedStr.charAt(1346))}
+              const parsedJob = JSON.parse(cleanedStr);
+              console.log("About to print parsed Job")
+              console.log(parsedJob)
+              return (
+                <div className="card" key={index}>
+                  <div className="card-body">
+                    {/* <h5 className="card-title">{parsedJob.title}</h5> */}
+                    {/* <p className="card-text">{parsedJob.description}</p> */}
+                    <a href={parsedJob.url} className="btn btn-primary">Apply</a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (

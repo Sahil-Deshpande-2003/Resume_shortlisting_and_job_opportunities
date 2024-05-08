@@ -10,7 +10,6 @@ import './App.css';
 import { Document, Page, pdfjs } from 'react-pdf'; // Import necessary components from react-pdf
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pdf
 import Navbar from './components/Navbar';
-import Job_Openings_Page from './components/Job_Openings_Page';
 // Set up pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 

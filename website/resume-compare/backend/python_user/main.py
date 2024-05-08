@@ -85,9 +85,11 @@ sorted_job_descriptions = sorted(similarity_scores, key=lambda x: x[1], reverse=
 
 # print("Sorted job descriptions:", sorted_job_descriptions)
 
+list_ret = []
+
 for i, similarity_score in sorted_job_descriptions:
-    print("************************************************************************")
-    print(f"{job_descriptions.job_descriptions[i]}: {similarity_score}")
-    pass
-# print("Hi Sahhil")
+    list_ret.append([job_descriptions.job_descriptions[i]])
     
+# print("Hi Sahhil")
+
+print(list_ret)
