@@ -4,10 +4,15 @@ const path = require("path");
 const router = express.Router();
 // import { json } from "express";
 
-const executePython = async (script, args) => {
+const executePython = async (script,args) => {
+
   console.log("Inside executePython");
+  console.log(typeof args)
+  console.log(args)
   const arguments = args.map((arg) => arg.toString());
 
+  console.log(script)
+  
   const py = spawn("python", [script, ...arguments]);
 
   console.log("After py");
@@ -48,10 +53,10 @@ router.get("/", async (req, res) => {
 
     console.log("Resume text: " + resume_text);
 
-    const scriptPath = path.join(__dirname, "..", "python_user1", "final.py");
+    const scriptPath = path.join(__dirname, "..", "python_user", "main.py");
     // const scriptPath = "/python/similar_products.py";
     // const result = await executePython(scriptPath, ["camera"]);
-    const result = await executePython(scriptPath, [resume_text]);
+    const result = await executePython(scriptPath,[resume_text]);
 
     console.log("Result from Python script:", result);
 

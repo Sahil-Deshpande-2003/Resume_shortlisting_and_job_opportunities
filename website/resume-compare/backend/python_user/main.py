@@ -9,7 +9,7 @@ import re
 
 def custom_tokenizer(text): # So that 'C' is not ignored which is ignored whenever we instantiate tfidfvectorizer
 
-
+    # print("Input text:", text)
 
     special_cases = {"c++": "cplusplus", "c#": "csharp"}
 
@@ -49,6 +49,7 @@ Job_Desc_Skills_2D_array = Final_Job_Desc_Skills.skills_2D
 
 Resume_skills = Final_Resume_Skills.skills
 
+# print("Resume skills:", Resume_skills)
 
 vect = TfidfVectorizer(tokenizer=custom_tokenizer,stop_words="english")
 
@@ -80,7 +81,13 @@ for i in range(len(Job_Desc_Skills_2D_array)):
 
 sorted_job_descriptions = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
 
+
+
+# print("Sorted job descriptions:", sorted_job_descriptions)
+
 for i, similarity_score in sorted_job_descriptions:
     print("************************************************************************")
     print(f"{job_descriptions.job_descriptions[i]}: {similarity_score}")
+    pass
+# print("Hi Sahhil")
     

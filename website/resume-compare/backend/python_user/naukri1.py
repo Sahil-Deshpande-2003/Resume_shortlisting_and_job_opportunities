@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 import csv
+import sys
 BASE_URL = "https://www.careerbuilder.co.in"
 
 urls = []
@@ -56,8 +57,9 @@ def transform(soup, url):
     jobs.append(Data)
 
 # Example usage
-# search_query = input("Enter your search query: ")
-search_query = "python developer"
+search_query = str(sys.argv[1])
+print(f"Search Query = {search_query}")
+# search_query = "python developer"
 result_url = get_naukri_url(search_query)
 
 # print(result_url)
