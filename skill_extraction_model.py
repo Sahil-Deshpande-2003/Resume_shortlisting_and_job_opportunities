@@ -1,21 +1,17 @@
+import PyPDF2
 import csv
 import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 import spacy
 from spacy.matcher import PhraseMatcher
 import re
-
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
 # Download NLTK data (if not already downloaded)
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+nltk.download('wordnet')
 
 # Get English stopwords
 stop_words = set(stopwords.words('english'))
-
 
 # Initialize WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
@@ -30,7 +26,7 @@ csv_file_path = 'skill2vec_50K.csv'
 filtered_tokens_list = []
 
 # Open the CSV file in read mode
-with open(csv_file_path, mode='r') as file:
+with open(csv_file_path, mode='r',encoding="utf8") as file:
     # Create a CSV reader object
     csv_reader = csv.reader(file)
 
@@ -39,53 +35,68 @@ with open(csv_file_path, mode='r') as file:
         # Tokenize the text in each non-empty column of the row
         for text in row:
             if text:  # Check if text is not empty
-                
-                # tokens = word_tokenize(text)
-
-                 # Replace commas with whitespace
+                # Replace commas with whitespace
                 text = text.replace(',', ' ').replace('_', ' ').replace('(', ' ').replace(')', ' ')
-                
                 # Tokenize text based on whitespace and commas
                 tokens = text.split()  # Split using whitespace by default
-                
                 # Remove specific characters like '/', '-'
                 tokens = [re.sub(r'[\/\-]', '', token) for token in tokens]
-
                 # Filter out empty tokens
                 tokens = [token for token in tokens if token]
-                
                 # Remove stop words and numbers
-                # filtered_tokens = [token for token in tokens if token.lower() not in stop_words and not token.isdigit()]
-
                 filtered_lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens 
                                                if token.lower() not in stop_words and not token.isdigit()]
-                
                 # Append filtered tokens to the list
                 if filtered_lemmatized_tokens:
-                    # filtered_tokens_list.append(filtered_tokens)
-                    # filtered_tokens_list.extend(filtered_tokens)
-
-                
-                    # Extend the list with filtered and lemmatized tokens
                     filtered_lemmatized_tokens_list.extend(filtered_lemmatized_tokens)
 
 # Load English language model
 nlp = spacy.load("en_core_web_sm")
-# print(nlp)
-
-# Sample resume text (replace this with your actual resume text)
-# resume_text = """
-# Experienced software engineer proficient in Python, Java, and JavaScript. Skilled in web development, database management, and cloud computing. Strong problem-solving skills and ability to work in a team environment c++.
-# """
 
 # Define list of skills
 skills_list = filtered_lemmatized_tokens_list
 
+# print(f"Printing skills_list")
+
+# print(f"{skills_list}")
+
 # Initialize PhraseMatcher
 matcher = PhraseMatcher(nlp.vocab)
 patterns = [nlp(skill) for skill in skills_list]
-# print(patterns)
 matcher.add("SKILL", None, *patterns)
 
-# Save the pre-trained model to disk
-nlp.to_disk("pretrained_model")
+# Function to extract text from PDF
+def extract_text_from_pdf(pdf_path):
+    text = ""
+    with open(pdf_path, 'rb') as file:
+        pdf_reader = PyPDF2.PdfReader(file)
+        for page_num in range(len(pdf_reader.pages)):
+            text += pdf_reader.pages[page_num].extract_text()
+    return text
+
+# Function to extract skills from text
+def extract_skills_from_text(text):
+    doc = nlp(text)
+    matches = matcher(doc)
+    # matched_skills = [doc[start:end].text for match_id, start, end in matches]
+    # return matched_skills
+    for match_id, start, end in matches:
+        span = doc[start:end]
+        # print(span.text)
+
+# Path to the PDF file
+pdf_file_path = 'D:\DS_Project_endgame\Resume_shortlisting_and_job_opportunities\Resume_Sahil_Deshpande_test.pdf'
+
+# Extract text from PDF
+pdf_text = extract_text_from_pdf(pdf_file_path)
+
+# print(f"Printing pdf text")
+
+# print(f"{pdf_text}")
+
+# Extract skills from the text
+extracted_skills = extract_skills_from_text(pdf_text)
+
+# Print extracted skills
+# print("Extracted Skills:")
+# print(extracted_skills)

@@ -113,7 +113,6 @@ function User() {
     <div className="App">
       <form className="formStyle" onSubmit={handleSubmit}>
         <h2>Upload PDF here</h2>
-        <input type="text" className="form-control" placeholder="Title" required onChange={(e) => setTitle(e.target.value)} />
         <br />
         <input type="file" className="form-control" accept="application/pdf" required onChange={onFileChange} />
         <br />
