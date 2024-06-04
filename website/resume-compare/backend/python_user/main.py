@@ -2,85 +2,70 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import Final_Job_Desc_Skills
-import Final_Resume_Skills
+# import Final_Resume_Skills
 import job_descriptions
+import skill_extraction
+import Extract_Text_from_pdf
 import re
+import json
 
+Resume_skills = skill_extraction.extracted_skills([Extract_Text_from_pdf.read_pdf('aman_resume')])
+resume_skills_str = " ".join(Resume_skills[0])
 
-def custom_tokenizer(text): # So that 'C' is not ignored which is ignored whenever we instantiate tfidfvectorizer
+# Convert JSON string to Python dictionary
+all_job_desc_data = job_descriptions.get_job_description(resume_skills_str)
 
+only_job_descr = []
 
+Job_Desc_Skills_2D_array = []
+job_desc_array = []
+parsed_json_array = []
 
-    special_cases = {"c++": "cplusplus", "c#": "csharp"}
+for i in all_job_desc_data:
 
-    tokens = re.split(r'\s*,\s*', text)
+    ## Replace single quotes with double quotes
+    json_str = i.replace("\'", '\"')
 
-    for i, token in enumerate(tokens):
-        if token in special_cases.keys():
-            tokens[i] = token.replace("++", "plusplus").replace("#", "sharp")
+    ## Remove problematic escape sequences
+    json_str = json_str.replace('\\', '')
 
+    parsed_json = json.loads(json_str)
 
-    tokens = [re.sub(r'\W+', '', token) for token in tokens]
+    parsed_json_array.append(parsed_json)
 
-    '''
-    This line of code removes non-alphanumeric characters from each token in a list called tokens
+    Job_Desc_Skills_2D_array.append(parsed_json["skills"])
 
-    Input = ["apple!", "banana123", "$$cherry$$", "grape?"]
-    Output = ['apple', 'banana123', 'cherry', 'grape']
+# Join the sets into strings
+job_descriptions_str = [" ".join(jd) for jd in Job_Desc_Skills_2D_array]
 
-    '''
+# Combine resume skills with job description skills for TF-IDF vectorization
+documents = [resume_skills_str] + job_descriptions_str
 
-    '''
-    With enumerate(), you don't need to manually index into the list (tokens[i]). Instead, you directly get both the index (i) and the value (token) in each iteration of the loop.
-    '''
-    
-    for i, token in enumerate(tokens):
+# Initialize the TfidfVectorizer
+vectorizer = TfidfVectorizer(stop_words="english")
 
-        if token in special_cases.values():
-            
-            for key, value in special_cases.items():
-                if value == token:
-                    tokens[i] = key
-                      
-    return tokens
+# Fit the model and transform the documents into TF-IDF vectors
+tfidf_matrix = vectorizer.fit_transform(documents)
 
+# Compute the cosine similarity between the resume and all job descriptions
+similarity_matrix = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])
 
-Job_Desc_Skills_2D_array = Final_Job_Desc_Skills.skills_2D
+# Get the similarity scores
+similarity_scores = similarity_matrix[0]
 
-Resume_skills = Final_Resume_Skills.skills
+# Get index and score tuple
+similarity_scores_tuple = [(index, score) for index, score in enumerate(similarity_scores)]
 
+# Get sorted similarity scores
+sorted_similarity_scores_tuple = sorted(similarity_scores_tuple, key=lambda x: x[1], reverse=True)
 
-vect = TfidfVectorizer(tokenizer=custom_tokenizer,stop_words="english")
+# collect card data to display
+card_data = []
 
-tfidf_job_description = vect.fit_transform(Resume_skills)
+for idx, score in sorted_similarity_scores_tuple:
+    card_data.append(parsed_json_array[idx])
+    # print(f"Similarity score with job description {idx + 1}: {score:.4f}")
+    # print(parsed_json_array[idx])
+    # print()
 
-
-similarity_scores = []
-
-for i in range(len(Job_Desc_Skills_2D_array)):
-
-    row = Job_Desc_Skills_2D_array[i]
-
-    final_score = 0
-
-    for skill in row:
-
-        tfidf_matrix_resume = vect.transform([skill])
-
-        similarity  = cosine_similarity(tfidf_matrix_resume, tfidf_job_description)
-
-
-        curr_score = np.mean(similarity)
-
-        final_score+=curr_score
-
-
-    similarity_scores.append((i,final_score))
-  
-
-sorted_job_descriptions = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
-
-for i, similarity_score in sorted_job_descriptions:
-    print("************************************************************************")
-    print(f"{job_descriptions.job_descriptions[i]}: {similarity_score}")
-    
+print(card_data)

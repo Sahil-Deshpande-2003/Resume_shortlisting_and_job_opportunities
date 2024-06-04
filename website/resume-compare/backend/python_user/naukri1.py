@@ -37,6 +37,10 @@ def transform_url(soup):
         urls.append(url)
     return
 
+# Function to filter out elements with specific class
+def exclude_class(tag):
+    return tag.has_attr("class") and "external-apply-link" in tag["class"]
+
 def transform(soup, url):
     try:
         title = soup.find('h1', class_= "h3 dark-blue-text b jdp_title_header upcase").text
@@ -52,35 +56,31 @@ def transform(soup, url):
     except:
         skills = None
 
-    Data = {"title": title, "description": description, "skills": skills, "url": url}
+    # Data = {"title": title, "description": description, "skills": skills, "url": str(url.replace('\"', ''))}
+    Data = {}
+    Data["title"] = title
+    Data["description"] = description.replace(':', '').replace('\'', '').replace('\"', '')
+    Data["skills"] = skills
+    Data["url"] = url
     jobs.append(Data)
 
-# Example usage
-# search_query = input("Enter your search query: ")
-search_query = "python developer"
-result_url = get_naukri_url(search_query)
+def get_job_data(search_query):
+    result_url = get_naukri_url(search_query)
+    # print("Result url: ", result_url)
+    soup = extract(result_url)
+    transform_url(soup)
 
-# print(result_url)
-soup = extract(result_url)
-# print(soup)
-transform_url(soup)
+    index = 4
+    # print("urls", urls)
+    for i in urls:
+        if index == 0:
+            break
+        index = index - 1
+        soup = extract(i)
+        transform(soup, i)
 
-# print(urls)
-index = 5
-for i in urls:
-    if index == 0:
-        break
-    index = index - 1
-    soup = extract(i)
-    transform(soup, i)
-   # print(i)
-
-
-naukri1 = []
-
-for job in jobs:
-
-
-    naukri1.append(str(job))
-
-# print(jobs)
+    naukri1 = []
+    
+    for job in jobs:
+        naukri1.append(str(job))
+    return naukri1
