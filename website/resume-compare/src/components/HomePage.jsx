@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function HomePage() {
+function HomePage(props) {
   return (
     <div>
       <h1>Select one of the option</h1>

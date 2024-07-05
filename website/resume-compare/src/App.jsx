@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import User from './components/User'
 import Hr from './components/Hr'
+import Alert from './components/Alert'
 import './App.css';
 import { Document, Page, pdfjs } from 'react-pdf'; // Import necessary components from react-pdf
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pdf
@@ -27,6 +28,22 @@ function App() {
   const [numPages, setNumPages] = useState(null); // State to store the number of pages
   const [pdfText, setPdfText] = useState(''); // State to store extracted text
   const [backendResponse, setbackendResponse] = useState('')
+  const [progress,setProgress] = useState(0)
+
+
+  const [alert,setAlert] = useState(null)
+
+  const showAlert = (message,type)=>{
+
+    console.log("Inside Show Alert")
+
+      setAlert({message,type})
+
+      setTimeout(()=>{
+
+        setAlert(null)
+      },2000)
+  }
 
   const onFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -114,34 +131,17 @@ function App() {
   };
 
   return (
-    // <div className="App">
-    //   <form className="formStyle" onSubmit={handleSubmit}>
-    //     <h2>Upload PDF here</h2>
-    //     <input type="text" className="form-control" placeholder="Title" required onChange={(e) => setTitle(e.target.value)} />
-    //     <br />
-    //     <input type="file" className="form-control" accept="application/pdf" required onChange={onFileChange} />
-    //     <br />
-    //     <button className="btn btn-primary" type="submit" disabled={!file}>
-    //       Submit
-    //     </button>
-    //   </form>
-    //   {backendResponse && (
-    //     <div>
-    //       <h3>Extracted Text</h3>
-    //       <p>{backendResponse}</p>
-    //     </div>
-    //   )}
-    // </div>
+
     
       <Router>
+            <Alert alert={alert}/>
         <Routes>
-        <Route path="/" exact element={<HomePage/>} />
-        <Route path="/user" element={<User/>} />
-        <Route path="/Hr" element={<Hr/>} />
+        <Route path="/" exact element={<HomePage alert={alert} showAlert={showAlert}/>} />
+        <Route path="/user" element={<User alert={alert} showAlert={showAlert}/>} />
+        <Route path="/Hr" element={<Hr alert={alert} showAlert={showAlert}/>} />
         </Routes>
         
-        
-        {/* <Route path="/contact" component={ContactPage} /> */}
+
       </Router>
   );
 }

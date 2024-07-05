@@ -1,80 +1,123 @@
-const express = require("express");
-const { spawn } = require("child_process");
-const path = require("path");
+const express = require('express');
+const multer = require('multer');
+const { execFile } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const { MongoClient } = require('mongodb');
+
 const router = express.Router();
 
-// import { json } from "express";
+// Middleware for parsing application/json
+router.use(express.json());
 
-// const bodyParser = require('body-parser');
-const TextModel = require('../mongoose');
+// Set up Multer for file uploads
+const upload = multer({ dest: 'uploads/' });
 
-// app.use(bodyParser.json());
+// Endpoint to handle file uploads and text extraction
+router.post('/', upload.single('resume'), (req, res) => {
+
+    console.log("Received POST request at /api/text");
+  
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    // const filePath = path.join(__dirname, req.file.path);
+
+    const filePath = req.file.path;
+
+    // console.log("req.file.path = " + req.file.path)
+    // const description = req.body.description;
+
+    const description = JSON.parse(req.body.description); // Parse the description string back into an array
+
+    
+    for (let index = 0; index < description.length; index++) {
+        const element = description[index];
+        console.log("element in hr.js = " + element)
+        
+    }
 
 
-const executePython = async (script, args) => {
-  console.log("Inside executePython");
-  const arguments = args.map((arg) => arg.toString());
 
-  const py = spawn("python", [script, ...arguments]);
 
-  console.log("After py");
+    const pythonScriptPath = path.join(__dirname, 'final2.py');
 
-  let result = "";
+    console.log("req.file.path = " + filePath)
 
-  py.stdout.on("data", (data) => {
-    console.log("About to print data");
-    // const decoder = new TextDecoder('utf-8')
-    // const decodedString = Buffer.from(data, 'utf-8').toString();
-    console.log(data);
-    result += data.toString();
-    // console.log(result)
-  });
+    // Run the Python script with the uploaded file
+    execFile('python', [pythonScriptPath, filePath,description], (error, stdout, stderr) => {
+        if (error) {
+            console.error('Error executing Python script:', stderr);
+            return res.status(500).send('Error processing file.');
+        }
 
-  py.stderr.on("data", (data) => {
-    console.error(`[python] Error occurred: ${data}`);
-  });
+        // const sortedCandidates = stdout();
 
-  return new Promise((resolve, reject) => {
-    py.on("exit", (code) => {
-      console.log("Aman");
-      console.log(`Child process exited with code ${code}`);
-      if (code === 0) {
-        resolve(result);
-      } else {
-        reject(`Error occurred in ${script}`);
-      }
+        const sortedCandidates = JSON.parse(stdout.trim());
+
+        console.log("Trying to print sorted Candidates inside hr.js!!!")
+
+        console.log(sortedCandidates)
+
+        // Parse the Python script output
+        // const extractedText = stdout.trim();
+
+        // console.log("Life before extractedText")
+        // console.log(extractedText)
+
+        // Save extracted text to MongoDB
+
+        res.json({ message: 'File processed successfully', sortedCandidates })
+
+        saveToMongoDB(sortedCandidates, req.file.originalname)
+            .then(() => {
+                // Cleanup uploaded file
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting uploaded file:', err);
+                    }
+                });
+
+                // Send success response
+                console.log("Trying to send data to frontend!!")
+                res.json({ message: 'File processed successfully', sortedCandidates });
+
+                // res.send(sortedCandidates);
+            })
+            .catch((err) => {
+                console.error('Error saving to database:', err);
+                res.status(500).send('Error saving to database.');
+            });
     });
-  });
-};
-
-router.post("/", async (req, res) => {
-  console.log("Inside hr");
-  try {
-    const { description, extractedText} = await req.body;
-    // console.log(extractedText)
-    // const newText = new TextModel({ description, extractedText});
-    // await newText.save();
-    // res.json({ message: 'Text data saved successfully' });
-    const resume_text = extractedText;
-    // const reqProduct = JSON.parser(product);
-
-    console.log("Resume text: " + resume_text);
-
-    const scriptPath = path.join(__dirname, "..", "python_hr1", "final2.py");
-    // const scriptPath = "/python/similar_products.py";
-    // const result = await executePython(scriptPath, ["camera"]);
-    const result = await executePython(scriptPath, [resume_text]);
-
-    console.log("Result from Python script:", result);
-
-    res.json({ 'result': result});
-  } catch (error) {
-    console.error('Error saving text data:', error);
-    res.status(500).json({ error: 'Internal server error' });
-    console.log(error);
-  }
-
 });
 
-module.exports = router;
+// Function to save extracted text to MongoDB
+const saveToMongoDB = (text, fileName) => {
+    return new Promise((resolve, reject) => {
+        const url = 'mongodb://localhost:27017';
+        const dbName = 'resumeData';
 
+        MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+            if (err) {
+                return reject(err);
+            }
+
+            const db = client.db(dbName);
+            const collection = db.collection('ResumeProject');
+
+            const doc = { fileName, text, project: 'ResumeProject' };
+
+            collection.insertOne(doc, (err, result) => {
+                client.close();
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    });
+};
+
+module.exports = router;

@@ -17,7 +17,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pd
 // Set up pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-function User() {
+function User(props) {
   const [title, setTitle] = useState('');
   const [file, setFile] = useState(null); // Store file object
   const [numPages, setNumPages] = useState(null); // State to store the number of pages
